@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: rgb(230,230,230);" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<children><Label fx:id="NicknameLabel" layoutX="47.464599609375" layoutY="27.5" style="-fx-font-weight: bold;" text="NICKNAME" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="25.0" /><Label fx:id="StatusLabel1" layoutX="25.464599609375" layoutY="50.5" text="Online 10 minutes ago" /><Label fx:id="StatusLabel2" layoutX="25.92919921875" layoutY="74.5" text="Last message 12 minutes ago" /><ListView fx:id="ChatHistory" layoutX="23.92919921875" layoutY="100.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="35.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="100.0" /><AnchorPane fx:id="MessagePane" layoutX="-0.535400390625" layoutY="277.0" maxHeight="35.0" minHeight="35.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+<children><Button fx:id="MessageSendButton" layoutX="538.2275390625" layoutY="300.0" maxHeight="30.0" maxWidth="35.0" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text=" " AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="35.0" AnchorPane.topAnchor="0.0">
+<graphic>
+<ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+<image>
+<Image url="@send-icon.png" />
+</image>
+</ImageView>
+</graphic>
+</Button><TextField fx:id="MessageTextField" layoutX="0.3759765625" layoutY="300.0" minHeight="30.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="70.0" AnchorPane.topAnchor="0.0" /><Button fx:id="MessageAttachButton" layoutX="538.2275390625" layoutY="300.0" maxHeight="30.0" maxWidth="35.0" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text=" " AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+<graphic>
+<ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+<image>
+<Image url="@attach-icon.png" />
+</image>
+</ImageView>
+</graphic>
+</Button>
+</children></AnchorPane><AnchorPane fx:id="AttachPane" layoutX="-0.535400390625" layoutY="286.0" maxHeight="35.0" minHeight="35.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0">
+<children><TextField fx:id="AttachTextField" layoutX="66.8759765625" layoutY="1.5" promptText="Attach..." AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="105.0" AnchorPane.topAnchor="0.0" /><Button fx:id="AttachSelectButton" layoutX="538.2275390625" layoutY="300.0" maxHeight="30.0" maxWidth="35.0" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text=" " AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="35.0" AnchorPane.topAnchor="0.0">
+<graphic>
+<ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+<image>
+<Image url="@ok-icon.png" />
+</image>
+</ImageView>
+</graphic>
+</Button><Button fx:id="AttachOkButton" layoutX="481.7275390625" layoutY="5.0" maxWidth="35.0" minWidth="35.0" mnemonicParsing="false" text="..." AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="70.0" AnchorPane.topAnchor="0.0" /><Button fx:id="AttachCancelButton" layoutX="538.2275390625" layoutY="300.0" maxHeight="30.0" maxWidth="35.0" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" text=" " AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+<graphic>
+<ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+<image>
+<Image url="@cancel-icon.png" />
+</image>
+</ImageView>
+</graphic>
+</Button>
+</children></AnchorPane><MenuButton fx:id="OptionsMenuButton" layoutX="455.381103515625" layoutY="28.5" maxHeight="25.0" minHeight="25.0" mnemonicParsing="false" text="   options" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+  <items>
+    <MenuItem fx:id="OptionClearHistory" mnemonicParsing="false" text="Clear history" />
+    <MenuItem fx:id="OptionBlock" mnemonicParsing="false" text="Block" />
+  </items>
+</MenuButton>
+</children></AnchorPane>

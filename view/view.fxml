@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<TabPane fx:id="ChatTabPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" side="LEFT" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="50.0" tabMaxWidth="50.0" tabMinHeight="50.0" tabMinWidth="50.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ChatController">
+  <tabs>
+    <Tab text="  ">
+      <content>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+<children><Label fx:id="NicknameLabel" layoutX="34.464599609375" layoutY="31.5" style="-fx-font-weight: bold;" text="NICKNAME" textFill="#6a2072" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="25.0" /><Separator layoutX="14.0" layoutY="63.5" prefWidth="200.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" /><TextField fx:id="NicknameTextField" layoutX="25.3759765625" layoutY="20.5" AnchorPane.leftAnchor="120.0" AnchorPane.topAnchor="20.0" /><Button fx:id="NicknameButton" layoutX="298.2275390625" layoutY="20.5" mnemonicParsing="false" onMouseClicked="#NicknameEntered" text="GO!" /><TextArea fx:id="ConsoleTextArea" editable="false" layoutX="25.0" layoutY="91.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="65.0" />
+</children></AnchorPane>
+      </content>
+<graphic><ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+<image>
+<Image url="@status-icon.png" />
+</image></ImageView>
+</graphic>
+    </Tab>
+    <Tab fx:id="ChatRoomTab" disable="true" text="  ">
+      <content>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+<children><Label layoutX="34.464599609375" layoutY="31.5" style="-fx-font-weight: bold;" text="CHAT ROOM" textFill="#6a2072" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="25.0" /><Separator layoutX="14.0" layoutY="63.5" prefWidth="200.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" /><SplitPane dividerPositions="0.29797979797979796" focusTraversable="true" layoutX="69.5" layoutY="90.0" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="65.0">
+  <items>
+    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+<children><ListView fx:id="ChatList" layoutY="-6.0" onMouseClicked="#ChatListClicket" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+</children></AnchorPane>
+    <AnchorPane fx:id="ChatRoomAnchorPane" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" />
+  </items>
+</SplitPane>
+</children></AnchorPane>
+      </content>
+<graphic><ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+<image>
+<Image url="@chat-icon.png" />
+</image></ImageView>
+</graphic>
+    </Tab>
+  </tabs>
+</TabPane>
