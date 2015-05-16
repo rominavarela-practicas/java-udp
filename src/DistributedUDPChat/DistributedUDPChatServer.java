@@ -53,14 +53,17 @@ public class DistributedUDPChatServer {
 		    				{		    				
 			    				case SERVER_PING:
 		    					{
+		    						//send id
+		    						Session client= sessionPool.find(msgIn.srcNickname);
 		    						Msg outMsg= new Msg(0, "", 
 		    								msgIn.srcNickname, MsgType.SERVER_PING, 
-		    								""+msgIn.id,
+		    								""+client.ID,
 		    								System.currentTimeMillis());
 		    						
 		    						System.out.println("server hello "+msgIn.srcNickname);
 			    					outbox.push(outMsg);
 			    					
+			    					//update list
 			    					if(sessionPool.size()-1 > Integer.parseInt(msgIn.content))
 			    					{
 			    						outMsg= new Msg(0, "", 

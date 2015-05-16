@@ -68,7 +68,6 @@ public class DistributedUDPChatClient {
 				    				case SERVER_PING:
 			    					{
 			    						int id= Integer.parseInt(msgIn.content);
-			    						
 			    						// update self id
 			    						if(id!=sessionPool.self.ID)
 			    						{

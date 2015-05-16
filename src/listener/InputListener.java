@@ -42,6 +42,8 @@ public class InputListener {
 		 				synchronized(inbox){
 			 				inbox.notifyAll();
 		 				 }
+		 				
+		 				System.out.println("in "+msg.serialize());
 		 			}
 		 			catch(Exception ex)
 		 			{

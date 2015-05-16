@@ -63,9 +63,11 @@ public class Room
 		AttachSelectButton= (Button)room.lookup("#AttachSelectButton");
 		AttachCancelButton= (Button)room.lookup("#AttachCancelButton");
 		AttachOkButton= (Button)room.lookup("#AttachOkButton");
+		
+		setEventHandlers();
 	}
 	
-	void setMessageSendButtonAction()
+	void setEventHandlers()
 	{
 		MessageSendButton.setOnMouseClicked(new EventHandler<Event>() {
 			@Override

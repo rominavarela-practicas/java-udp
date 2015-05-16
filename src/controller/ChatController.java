@@ -104,6 +104,9 @@ public class ChatController {
 	public void ChatListClicket()
 	{
 		String nickname= ChatList.getSelectionModel().getSelectedItem();
+		if(nickname.isEmpty())
+			return;
+		
 		Room 		r = null;
 		AnchorPane 	room = null;
 		
@@ -117,13 +120,10 @@ public class ChatController {
 		if(r==null || !r.nickname.contentEquals(nickname))
 			try
 			{
-				System.out.println("A");
 				@SuppressWarnings("deprecation")
 				URL loadUrl = IOUtil.getFile("view/room.fxml").toURL();
 				FXMLLoader fxmlLoader = new FXMLLoader(loadUrl);
-				System.out.println("b");
 				room = (AnchorPane) fxmlLoader.load();
-				System.out.println("c");
 				
 				r= new Room(nickname, room);
 			}
@@ -137,9 +137,7 @@ public class ChatController {
 		
 
 		ChatRoomAnchorPane.getChildren().clear();
-		System.out.println("d");
 		ChatRoomAnchorPane.getChildren().add(room);
-		System.out.println("e");
 		
 		ChatRoomAnchorPane.setLeftAnchor(room, 0.0);
 		ChatRoomAnchorPane.setRightAnchor(room, 0.0);

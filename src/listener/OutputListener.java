@@ -49,11 +49,12 @@ public class OutputListener {
 	 				
 	 				while((msg=outbox.pop())!=null)
 	 				{
-
 			 			byte[] 			data 	= msg.toByteArray();
 						int 			len 	= data.length;
 						DatagramPacket 	reply;
 						Session 		dest;
+						
+		 				System.out.println("out "+msg.serialize());
 						
 						switch(msg.msgType)
 	 					{
