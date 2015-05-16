@@ -12,15 +12,13 @@ public class Env
 {
 	public static DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 	
-	public static boolean			IS_SERVER_SYNC=false;
 	public static boolean			SERVER_LAUNCHED=false;
+	public static long				LAST_SERVER_SYNC=0;
+	public static int 				SERVER_TIMEOUT;
 	
 	public static InetAddress 		SERVER_ADDRESS;
 	public static int 				SERVER_PORT;
 	public static int 				BUFFER_SIZE;
-
-	public static int 				SERVER_TIMEOUT;
-	
 	
 	public static void init()
 	{
@@ -43,5 +41,10 @@ public class Env
 			System.exit(0);
 		}
 		
+	}
+	
+	public static boolean IS_SERVER_SYNC()
+	{
+		return ( (System.currentTimeMillis() - Env.LAST_SERVER_SYNC) < Env.SERVER_TIMEOUT );
 	}
 }

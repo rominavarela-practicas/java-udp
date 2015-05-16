@@ -73,14 +73,9 @@ public class OutputListener {
 		 						}
 	 							break;
 		 					
-		 					case UPDATE_LIST_RES:
+		 					case UPDATE_LIST:
 	 							dest = sessionPool.find(msg.destNickname);
 	 							reply= new DatagramPacket(data.clone(), len, dest.address, dest.port);
-	 							con.socket.send(reply);
-	 							break;
-	 							
-		 					case UPDATE_LIST_REQ:
-		 						reply= new DatagramPacket(data.clone(), len, Env.SERVER_ADDRESS, Env.SERVER_PORT);
 	 							con.socket.send(reply);
 	 							break;
 		 					

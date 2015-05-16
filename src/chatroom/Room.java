@@ -1,5 +1,7 @@
 package chatroom;
 
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -61,5 +63,15 @@ public class Room
 		AttachSelectButton= (Button)room.lookup("#AttachSelectButton");
 		AttachCancelButton= (Button)room.lookup("#AttachCancelButton");
 		AttachOkButton= (Button)room.lookup("#AttachOkButton");
+	}
+	
+	void setMessageSendButtonAction()
+	{
+		MessageSendButton.setOnMouseClicked(new EventHandler<Event>() {
+			@Override
+			public void handle(Event arg0) {
+				System.out.println("send "+MessageTextField.getText()+" to "+nickname);
+			}
+		});
 	}
 }

@@ -6,7 +6,6 @@ import environment.Env;
 import listener.InputListener;
 import listener.OutputListener;
 import model_impl.Msg;
-import model_impl.Ping;
 import model_impl.Session;
 import model_safecollection.MsgCollection;
 import model_safecollection.SessionCollection;
@@ -59,65 +58,51 @@ public class DistributedUDPChatClient {
 		    			 if(inbox.isEmpty())
 			    				inbox.wait();
 			    			
-		    				while((msgIn=inbox.pop())!=null) switch(msgIn.msgType)
+		    				while((msgIn=inbox.pop())!=null)
 		    				{
-			    				case SERVER_PING:
-		    					{
-		    						Ping ping = new Ping(msgIn.content);
-		    						
-		    						// update self id
-		    						if(ping.clientId!=sessionPool.self.ID)
-		    						{
-		    							sessionPool.self.ID= ping.clientId;
-		        						Console.log("New ID: "+sessionPool.self.ID);
-		    						}
-		    						
-		    						// update session pool
-		    						if(sessionPool.size()<ping.serverListSize-1)
-		    						{
-			    						Console.log("updating contact list...");
-			    						Msg msgOut=
-			    								new Msg(sessionPool.self.ID, sessionPool.self.nickname,
-			    								"", MsgType.UPDATE_LIST_REQ, 
-				    							"", System.currentTimeMillis());
-			    						Console.log(msgOut.serialize());
-			    						outbox.push(msgOut);
-		    							
-		    						}
-		    						
-		    						Env.IS_SERVER_SYNC=true;
-		    						Env.SERVER_LAUNCHED=false;
-		    						break;
-		    					}
+		    					if(msgIn.srcNickname.isEmpty())
+		    						Env.LAST_SERVER_SYNC = System.currentTimeMillis();
 		    					
-			    				case UPDATE_LIST_RES:
-			    				{
-			    					Session s= new Session(msgIn.content);
-			    					s= sessionPool.visit(s.nickname, s.address, s.port, s.timestamp, s.ID);
-			    					
-			    					if(s.isNew)
+		    					switch(msgIn.msgType)
+			    				{			    					
+				    				case SERVER_PING:
 			    					{
-			    						Console.log("Met "+s.nickname);
-			    						s.isNew= false;
+			    						int id= Integer.parseInt(msgIn.content);
 			    						
-			    						if(msgIn.srcNickname.isEmpty())
+			    						// update self id
+			    						if(id!=sessionPool.self.ID)
 			    						{
-				    						Msg outMsg= new Msg(sessionPool.self.ID, sessionPool.self.nickname,
-				    								s.nickname, MsgType.UPDATE_LIST_RES, 
-				    								sessionPool.self.serialize(),
-				    								System.currentTimeMillis());
-				    						
-				    						outbox.push(outMsg);
-			    							
+			    							sessionPool.self.ID= id;
+			        						Console.log("New ID: "+id);
 			    						}
+			    						
+			    						Env.SERVER_LAUNCHED=false;
+			    						break;
 			    					}
 			    					
-			    					return;
+				    				case UPDATE_LIST:
+				    				{
+				    					for(Session s: sessionPool.deserialize(msgIn.content))
+				    						if(!s.nickname.contentEquals(sessionPool.self.nickname))
+					    					{
+					    						sessionPool.visit(s.nickname, s.address, s.port, s.timestamp, s.ID);
+					    						
+					    						if(s.isNew)
+						    					{
+						    						Console.log("Met "+s.nickname);
+						    						s.isNew= false;
+						    					}
+					    					}
+				    					
+				    					return;
+				    				}
+				    				
+			    					default:
+			    						break;
 			    				}
-			    				
-		    					default:
-		    						break;
 		    				}
+		    				
+		    				
 		    		 }
 		    	 }
 		    	 catch(Exception ex)
@@ -139,58 +124,42 @@ public class DistributedUDPChatClient {
 		     {
 		    	 while(true) try
 		    	 {
-		    		 Ping ping = new Ping(sessionPool.self.ID, -1);
-			    	 Msg msgOut= new Msg(sessionPool.self.ID, sessionPool.self.nickname, 
-			 				 "", MsgType.SERVER_PING, ping.serialize(), System.currentTimeMillis());
-			    	 
-		    		 synchronized(msgOut)
-		    		 {
-		    			// 1 - IF SERVER IS NOT IN SYNC
-			    		while(!Env.IS_SERVER_SYNC)
-			    		{
-			    			outbox.push(msgOut);
-			    			msgOut.wait();
-			    			Thread.sleep(1000);
-			    			
-			    			// try to connect with server
-				    		for(int chances=20; chances>=0; chances--)
-				   			{
-				   				Thread.sleep(100);
-				   				if(Env.IS_SERVER_SYNC)
-				   				{
-				   					Console.log("Successfull Server Sync");
-				   					break;
-				   				}
-				   			}
-				    		 
-				    		// if server wasn't found, launch own server
-				    		//TODO HACER VOTACION SI EL ID != -1
-				    		if(!Env.IS_SERVER_SYNC && !Env.SERVER_LAUNCHED)
-					    		try
-					    		{
-					    			Console.log("Server not found. Starting up own server.");
-					    			server= new DistributedUDPChatServer();
-					    			Env.SERVER_LAUNCHED=true;
-					    			Thread.sleep(1000);
-					    		}
-				    			catch(Exception e){}
-			    		}
-			    		// 2 - PING TO SERVER EVERY SECOND TO PROOVE IT IS ALIVE
-			    		while(Env.IS_SERVER_SYNC)
-			    		{
-			    			Thread.sleep(Env.SERVER_TIMEOUT);
-			    			outbox.push(msgOut);
-			    			Env.IS_SERVER_SYNC=false;
-				    		
-				    		// try to connect with server
-				    		for(int chances=30; chances>=0; chances--)
-				   			{
-				   				Thread.sleep(100);
-				   				if(Env.IS_SERVER_SYNC)
-				   					break;
-				   			}
-			    		}
-		    		 }
+	    			while(Env.IS_SERVER_SYNC())
+	    				Thread.sleep(1000);
+	    			
+	    			 Msg msgOut= new Msg(sessionPool.self.ID, sessionPool.self.nickname, 
+			 				 "", MsgType.SERVER_PING, ""+sessionPool.size(), System.currentTimeMillis());
+	    			 
+	    			 synchronized(msgOut){
+			    		 outbox.push(msgOut);
+	    				 msgOut.wait();
+	    			 }
+	    			 
+	    			 int chances=20;
+	    			 while(!Env.IS_SERVER_SYNC() && chances>=0)
+	    			 {
+	    				 chances--;
+	    				 Thread.sleep(100);
+	    			 }
+	    			 
+	    			 if(Env.IS_SERVER_SYNC())
+	    			{
+	    				 Console.log("Successfull Server Sync");
+	    				 //return;//TODO currency problem patch
+	    			}
+	    			 else
+	    				 if(!Env.SERVER_LAUNCHED)
+				    		try
+				    		{
+				    			Env.SERVER_LAUNCHED=true;
+				    			Console.log("Server not found. Starting up own server.");
+				    			server= new DistributedUDPChatServer();
+				    			Thread.sleep(1000);
+				    		}
+			    			catch(Exception e)
+	    			 		{
+				    			Console.log("Server launch failed.");
+	    			 		}
 		    	 }
 		    	 catch(Exception ex)
 		    	 {

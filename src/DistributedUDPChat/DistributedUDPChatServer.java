@@ -4,7 +4,6 @@ import enums.MsgType;
 import listener.InputListener;
 import listener.OutputListener;
 import model_impl.Msg;
-import model_impl.Ping;
 import model_impl.Session;
 import model_safecollection.MsgCollection;
 import model_safecollection.SessionCollection;
@@ -51,43 +50,29 @@ public class DistributedUDPChatServer {
 			    				inbox.wait();
 			    			
 		    				while((msgIn=inbox.pop())!=null) switch(msgIn.msgType)
-		    				{
+		    				{		    				
 			    				case SERVER_PING:
 		    					{
-		    						Ping ping = new Ping(
-		    								sessionPool.find(msgIn.srcNickname).ID, 
-		    								sessionPool.size());
-		    						
-		    						//answer ping
 		    						Msg outMsg= new Msg(0, "", 
 		    								msgIn.srcNickname, MsgType.SERVER_PING, 
-		    								ping.serialize(),
+		    								""+msgIn.id,
 		    								System.currentTimeMillis());
 		    						
+		    						System.out.println("server hello "+msgIn.srcNickname);
 			    					outbox.push(outMsg);
+			    					
+			    					if(sessionPool.size()-1 > Integer.parseInt(msgIn.content))
+			    					{
+			    						outMsg= new Msg(0, "", 
+			    								msgIn.srcNickname, MsgType.UPDATE_LIST, 
+			    								sessionPool.serialize(),
+			    								System.currentTimeMillis());
+				    					
+		    							outbox.push(outMsg);
+			    					}
 			    						
 		    						break;
 		    					}
-		    					
-			    				case UPDATE_LIST_REQ:
-			    				{
-			    					System.out.println(msgIn);
-			    					for(Session s: sessionPool.getList())
-			    						if(s.ID!= msgIn.id)
-			    						{
-					    					System.out.println("notify "+s.ID+" to "+msgIn.srcNickname);
-					    					
-			    							Msg outMsg= new Msg(0, "", 
-				    								msgIn.srcNickname, MsgType.UPDATE_LIST_RES, 
-				    								s.serialize(),
-				    								System.currentTimeMillis());
-			    							
-					    					System.out.println(outMsg.serialize());
-			    							
-			    							outbox.push(outMsg);
-			    						}
-			    					break;
-			    				}
 		    					
 		    					default:
 			    					System.out.println("UNKNOWN "+msgIn);
@@ -102,4 +87,5 @@ public class DistributedUDPChatServer {
 		     }
 		});
 	}
+	
 }

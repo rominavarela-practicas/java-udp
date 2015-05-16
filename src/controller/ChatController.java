@@ -79,7 +79,7 @@ public class ChatController {
 		    	 try
 		    	 {
 		    		 Console.log("Synchronizing with server...");
-		    		 while(!Env.IS_SERVER_SYNC)
+		    		 while(!Env.IS_SERVER_SYNC())
 		    			 Thread.sleep(1000);
 		    		 
 		    		//enable and focus chat-room tab

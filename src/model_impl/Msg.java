@@ -6,6 +6,7 @@ import javax.xml.parsers.DocumentBuilder;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import enums.MsgType;
@@ -45,37 +46,24 @@ public class Msg extends MsgModel{
 		this.srcNickname= element.getElementsByTagName("srcNickname").item(0).getTextContent();
 		this.destNickname= element.getElementsByTagName("destNickname").item(0).getTextContent();
 		this.msgType= MsgType.valueOf(element.getElementsByTagName("msgType").item(0).getTextContent());
+		this.content="";
 		
-		Element contentElement;
-		Element sessionElement;
+		Element contentElement = (Element) element.getElementsByTagName("content").item(0);
 		switch(this.msgType)
 		{
-			case UPDATE_LIST_RES:
-				contentElement = (Element) element.getElementsByTagName("content").item(0);
-				sessionElement = (Element) contentElement.getElementsByTagName("session").item(0);
+			case UPDATE_LIST:
+				contentElement = (Element) contentElement.getElementsByTagName("sessions").item(0);
 				
-				this.content=
-				"<session>"
-						+"<id>"+sessionElement.getElementsByTagName("id").item(0).getTextContent()+"</id>"
-						+"<nickname>"+sessionElement.getElementsByTagName("nickname").item(0).getTextContent()+"</nickname>"
-						+"<address>"+sessionElement.getElementsByTagName("address").item(0).getTextContent()+"</address>"
-						+"<port>"+sessionElement.getElementsByTagName("port").item(0).getTextContent()+"</port>"
-				+"</session>";
-				break;
+				this.content="<sessions>";
+				NodeList children = contentElement.getElementsByTagName("session");
+				for(int i=0; i<children.getLength(); i++)
+					this.content += new Session((Element) children.item(i)).serialize();
+				this.content+="</sessions>";
 				
-			case SERVER_PING:
-				contentElement = (Element) element.getElementsByTagName("content").item(0);
-				sessionElement = (Element) contentElement.getElementsByTagName("ping").item(0);
-				
-				this.content=
-				"<ping>"
-						+"<clientId>"+sessionElement.getElementsByTagName("clientId").item(0).getTextContent()+"</clientId>"
-						+"<serverListSize>"+sessionElement.getElementsByTagName("serverListSize").item(0).getTextContent()+"</serverListSize>"
-				+"</ping>";
 				break;
 				
 			default:
-				this.content= element.getElementsByTagName("content").item(0).getTextContent();
+				this.content= contentElement.getTextContent();
 		}
 		
 		

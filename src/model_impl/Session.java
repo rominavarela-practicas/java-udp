@@ -38,12 +38,21 @@ public class Session extends SessionModel{
 		is.setCharacterStream(new StringReader(s));
 		Document doc = db.parse(is);
 		
-		Element element = (Element) doc.getElementsByTagName("session").item(0);
+		Element rootElement = (Element) doc.getElementsByTagName("session").item(0);
 		
-		this.ID = Integer.parseInt(element.getElementsByTagName("id").item(0).getTextContent());
-		this.nickname= element.getElementsByTagName("nickname").item(0).getTextContent();
-		this.address= Inet4Address.getByName(element.getElementsByTagName("address").item(0).getTextContent());
-		this.port= Integer.parseInt(element.getElementsByTagName("port").item(0).getTextContent());
+		this.ID = Integer.parseInt(rootElement.getElementsByTagName("id").item(0).getTextContent());
+		this.nickname= rootElement.getElementsByTagName("nickname").item(0).getTextContent();
+		this.address= Inet4Address.getByName(rootElement.getElementsByTagName("address").item(0).getTextContent());
+		this.port= Integer.parseInt(rootElement.getElementsByTagName("port").item(0).getTextContent());
+		this.timestamp= System.currentTimeMillis();
+	}
+	
+	public Session(Element rootElement) throws Exception
+	{
+		this.ID = Integer.parseInt(rootElement.getElementsByTagName("id").item(0).getTextContent());
+		this.nickname= rootElement.getElementsByTagName("nickname").item(0).getTextContent();
+		this.address= Inet4Address.getByName(rootElement.getElementsByTagName("address").item(0).getTextContent());
+		this.port= Integer.parseInt(rootElement.getElementsByTagName("port").item(0).getTextContent());
 		this.timestamp= System.currentTimeMillis();
 	}
 	
