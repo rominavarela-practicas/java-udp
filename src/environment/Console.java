@@ -17,7 +17,9 @@ public class Console
 	
 	public static synchronized void log(String s)
 	{
-		if(ConsoleTextArea!=null)
+		if(ConsoleTextArea==null)
+			System.out.println("["+sdf.format(new Date())+"] "+s+"\n");
+		else
 			ConsoleTextArea.insertText(0, "["+sdf.format(new Date())+"] "+s+"\n");
 	}
 }

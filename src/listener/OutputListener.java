@@ -54,8 +54,6 @@ public class OutputListener {
 						DatagramPacket 	reply;
 						Session 		dest;
 						
-		 				System.out.println("out "+msg.serialize());
-						
 						switch(msg.msgType)
 	 					{
 							//SERVER_PING client sends message to server, server replies message to client

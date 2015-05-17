@@ -3,6 +3,7 @@ package controller;
 import java.net.URL;
 import java.util.ArrayList;
 
+import main.FXMain;
 import chatroom.ContactList;
 import chatroom.Room;
 import environment.Console;
@@ -51,7 +52,7 @@ public class ChatController {
 		
 		//create chat
 		chat = new DistributedUDPChatClient(nickname);
-		Main.stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+		FXMain.stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 	          public void handle(WindowEvent we) {
 	        	  System.out.println("Closing "+chat.con.socket.getPort());
 	              chat.con.socket.close();
@@ -70,6 +71,8 @@ public class ChatController {
 		NicknameTextField.setVisible(false);
 		NicknameButton.setVisible(false);
 		Console.log("WELLCOME "+nickname+"!!!");
+		
+		
 		
 		//wait for server sync and enable the rest
 		new Thread(new Runnable()

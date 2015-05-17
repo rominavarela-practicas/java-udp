@@ -48,7 +48,7 @@ public class DistributedUDPChatClient {
 		return new Thread(new Runnable()
 		{
 		     public void run() 
-		     {
+		     { 
 		    	 Msg msgIn;
 		    	 
 		    	 while(true) try
@@ -93,7 +93,7 @@ public class DistributedUDPChatClient {
 						    					}
 					    					}
 				    					
-				    					return;
+				    					break;
 				    				}
 				    				
 			    					default:
@@ -107,6 +107,16 @@ public class DistributedUDPChatClient {
 		    	 catch(Exception ex)
 		    	 {
 		    		 System.out.println("Error @ ChatClientThread >> "+ex.getMessage());
+		    		 
+		    		 System.out.println("Closing "+con.socket.getPort());
+		              con.socket.close();
+		              if(server!=null)
+		              {
+			        	  System.out.println("Closing "+server.con.socket.getPort());
+		            	  server.con.socket.close();
+		              }
+		              System.out.println("Connection closed");
+		              System.exit(0);
 		    	 }
 		     }
 		});
