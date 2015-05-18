@@ -94,7 +94,7 @@ public class Msg extends MsgModel{
 	}
 
 	@Override
-	public String serialize() {		
+	public String serialize() {
 		return "<msg>"
 				+ "<id>"+id+"</id>"
 				+ "<srcNickname>"+srcNickname+"</srcNickname>"

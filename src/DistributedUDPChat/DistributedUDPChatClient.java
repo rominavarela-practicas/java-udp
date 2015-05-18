@@ -113,7 +113,6 @@ public class DistributedUDPChatClient {
 				    				
 				    				case HELLO:
 				    				{
-				    					if(msgIn.id==-2)
 				    					checkSession(sessionPool.find(msgIn.srcNickname));
 				    					
 				    					Conversation c= ChatRoom.find(msgIn.srcNickname);
@@ -123,6 +122,7 @@ public class DistributedUDPChatClient {
 				    				
 				    				case FILE_UP:
 				    				{
+				    					System.out.println("UP MSG "+msgIn.serialize());
 				    					checkSession(sessionPool.find(msgIn.srcNickname));
 					    				
 				    					ChatRoom.pushMsg(msgIn);

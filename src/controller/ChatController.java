@@ -13,7 +13,6 @@ import javax.swing.JOptionPane;
 import javax.xml.parsers.DocumentBuilder;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
 import main.FXMain;
@@ -35,6 +34,8 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.stage.WindowEvent;
 
 public class ChatController {
@@ -53,7 +54,7 @@ public class ChatController {
 
 	@FXML private Tab			RandomTab;
 	@FXML private Button 		ClimateButton;
-	@FXML private TextArea		ClimateTextArea;
+	@FXML private WebView		ClimateTextArea;
 	
 	@FXML private ListView<String> 	ChatList;
 	
@@ -146,7 +147,6 @@ public class ChatController {
 	
 	public void ClimateService()
 	{
-		ClimateTextArea.setText("climate service ...");
 		try
 		{
 			String url = "https://query.yahooapis.com/v1/public/yql?q=select+*+from+weather.forecast+where+woeid%3D124162&diagnostics=true";
@@ -174,26 +174,12 @@ public class ChatController {
 			is.setCharacterStream(new StringReader(response.toString()));
 			Document doc = db.parse(is);
 			
-			String desc= doc.getElementsByTagName("description").item(0).getTextContent().split("/>",2)[1];
-			String s= "";
-			int x=0;
-			for(int i=0; i<desc.length(); i++)
-			{
-				if(desc.charAt(i)=='<')
-					x++;
-				else if(desc.charAt(i)=='>')
-					x--;
-				else if(x<=0)
-				{
-					s+= desc.charAt(i);
-					x=0;
-				}
-			}
-
-			s=  doc.getElementsByTagName("title").item(0).getTextContent()+"\n"+s;
+			String description= doc.getElementsByTagName("description").item(1).getTextContent();
+			
 			//print result
-			System.out.println(s);
-			ClimateTextArea.setText(s);
+			System.out.println(description);
+			WebEngine webEngine = ClimateTextArea.getEngine();
+			webEngine.loadContent(description);
 			
 		}
 		catch(Exception ex)
