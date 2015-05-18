@@ -17,7 +17,7 @@ import environment.Env;
 public class Session extends SessionModel{
 	
 	public boolean		isNew;
-	public boolean		notify;
+	public boolean		isExt;
 
 	public Session(int ID, String nickname, InetAddress address, int port, long timestamp)
 	{
@@ -28,7 +28,6 @@ public class Session extends SessionModel{
 		this.timestamp= timestamp;
 		
 		this.isNew= true;
-		this.notify= true;
 	}
 	
 	public Session(String s) throws Exception

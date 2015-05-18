@@ -1,8 +1,13 @@
 package controller;
 
+import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
 import main.FXMain;
+import model_impl.Session;
 import chatroom.ChatRoom;
 import chatroom.Conversation;
 import chatroom.Room;
@@ -132,5 +137,30 @@ public class ChatController {
 	public void ClimateService()
 	{
 		ClimateTextArea.setText("climate service");
+	}
+	
+	public void AddExternalNet()
+	{
+		try
+		{
+			System.out.println("Add ext net");
+			String name= JOptionPane.showInputDialog("Target name");
+			String addr= JOptionPane.showInputDialog("Target address");
+			InetAddress address= Inet4Address.getByName(addr);
+			int port= Integer.parseInt(JOptionPane.showInputDialog("Target port"));
+			
+			Session extS= new Session(-2,name,address,port,Env.getTime());
+			extS.isExt=true;
+			
+			Env.client.sessionPool.visit(name, address, port, Env.getTime(), -2);
+			Env.client.sendHelloMsg(name);
+			ChatRoom.push(name);
+			
+		}
+		catch(Exception ex)
+		{
+			System.out.println("Error @ ChatController.AddExternalNet >> "+ex.getMessage());
+    		Console.log("Error @ ChatController.AddExternalNet >> "+ex.getMessage());
+		}
 	}
 }

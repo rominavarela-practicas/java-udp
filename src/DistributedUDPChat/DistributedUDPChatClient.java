@@ -113,6 +113,7 @@ public class DistributedUDPChatClient {
 				    				
 				    				case HELLO:
 				    				{
+				    					if(msgIn.id==-2)
 				    					checkSession(sessionPool.find(msgIn.srcNickname));
 				    					
 				    					Conversation c= ChatRoom.find(msgIn.srcNickname);
@@ -122,8 +123,7 @@ public class DistributedUDPChatClient {
 				    				
 				    				case FILE_UP:
 				    				{
-				    					if(msgIn.id!=0)
-					    					checkSession(sessionPool.find(msgIn.srcNickname));
+				    					checkSession(sessionPool.find(msgIn.srcNickname));
 					    				
 				    					ChatRoom.pushMsg(msgIn);
 				    					break;
@@ -239,9 +239,13 @@ public class DistributedUDPChatClient {
 	
 	public Msg sendPrivateMsg(String dstNickname, String content)
 	{
+
 		Msg msgOut= new Msg(sessionPool.self.ID, sessionPool.self.nickname, 
 				dstNickname, MsgType.PRIVATE, content, Env.getTime());
 		outbox.push(msgOut);
+		
+		if(sessionPool.find(dstNickname).isExt)
+			msgOut.id= -2;
 		
 		return msgOut;
 	}

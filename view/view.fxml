@@ -22,7 +22,12 @@
     <Tab fx:id="ChatRoomTab" disable="true" text="  ">
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-<children><Label layoutX="34.464599609375" layoutY="31.5" style="-fx-font-weight: bold;" text="CHAT ROOM" textFill="#6a2072" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="25.0" /><Separator layoutX="14.0" layoutY="63.5" prefWidth="200.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" /><SplitPane dividerPositions="0.29797979797979796" focusTraversable="true" layoutX="69.5" layoutY="90.0" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="65.0">
+<children><Label layoutX="34.464599609375" layoutY="31.5" style="-fx-font-weight: bold;" text="CHAT ROOM" textFill="#6a2072" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="25.0" /><Button mnemonicParsing="false" onMouseClicked="#AddExternalNet" text="External Network" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+<graphic><ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+<image>
+<Image url="@ext-icon.png" />
+</image></ImageView>
+</graphic></Button><Separator layoutX="14.0" layoutY="63.5" prefWidth="200.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" /><SplitPane dividerPositions="0.29797979797979796" focusTraversable="true" layoutX="69.5" layoutY="90.0" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="65.0">
   <items>
     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
 <children><ListView fx:id="ChatList" layoutY="-6.0" onMouseClicked="#ChatListClicket" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />

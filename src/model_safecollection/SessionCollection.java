@@ -43,12 +43,13 @@ public class SessionCollection extends safecollection<Session>{
 			s.address= address;
 			s.port= port;
 			s.timestamp= timestamp;
-			s.notify= true;
 			
 			return s;
 		}
 		
 		s= new Session(ID, srcNickname, address, port,timestamp);
+		if(s.ID==-2)
+			s.isExt=true;
 		int newID = super.push(s);
 		if(self.isServer())
 			s.ID= newID;
@@ -81,5 +82,15 @@ public class SessionCollection extends safecollection<Session>{
 			list.add(new Session((Element) children.item(i)));
 		
 		return list;
+	}
+	
+	@Override
+	public int size()
+	{
+		int size=0;
+		for(Session s: super.getList())
+			if(!s.isExt)
+				size++;
+		return size;
 	}
 }
