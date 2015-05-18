@@ -9,6 +9,7 @@ import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import lib.Base64;
 import DistributedUDPChat.DistributedUDPChatClient;
 import DistributedUDPChat.DistributedUDPChatServer;
 
@@ -16,11 +17,13 @@ public class Env
 {
 	public static DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 	public static SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss");
+	public static Base64 B64= new Base64();
 	
 	public static boolean			SERVER_LAUNCHED=false;
 	public static long				LAST_SERVER_SYNC=0;
 	public static int 				SERVER_TIMEOUT;
 	public static int 				ONLINE_TIMEOUT;
+	public static int				CLOCK_DIFFERENCE=0;
 	
 	public static InetAddress 		SERVER_ADDRESS;
 	public static int 				SERVER_PORT;
@@ -59,5 +62,10 @@ public class Env
 	public static boolean IS_SERVER_SYNC()
 	{
 		return ( (System.currentTimeMillis() - Env.LAST_SERVER_SYNC) < Env.SERVER_TIMEOUT );
+	}
+	
+	public static long getTime()
+	{
+		return System.currentTimeMillis() + Env.CLOCK_DIFFERENCE;
 	}
 }

@@ -61,6 +61,7 @@ public class Room
 		
 		AttachPane= (Pane)pane.lookup("#AttachPane");
 		AttachTextField= (TextField)pane.lookup("#AttachTextField");
+		AttachTextField.setEditable(false);
 		AttachSelectButton= (Button)pane.lookup("#AttachSelectButton");
 		AttachCancelButton= (Button)pane.lookup("#AttachCancelButton");
 		AttachOkButton= (Button)pane.lookup("#AttachOkButton");

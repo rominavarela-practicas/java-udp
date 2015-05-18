@@ -37,6 +37,27 @@
 <Image url="@chat-icon.png" />
 </image></ImageView>
 </graphic>
-    </Tab>
+    </Tab><Tab fx:id="RandomTab" disable="true" text="  ">
+<content>
+<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+<children>
+<Label layoutX="34.464599609375" layoutY="31.5" style="-fx-font-weight: bold;" text="MISCELLANIOUS" textFill="#6a2072" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="25.0" />
+<Separator layoutX="14.0" layoutY="63.5" prefWidth="200.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" /><Button fx:id="ClimateButton" layoutX="48.2275390625" layoutY="105.5" mnemonicParsing="false" onMouseClicked="#ClimateService" text="Climate Service" AnchorPane.leftAnchor="50.0" AnchorPane.topAnchor="105.0">
+<graphic><ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+<image>
+<Image url="@update-icon.png" />
+</image></ImageView>
+</graphic></Button><TextArea fx:id="ClimateTextArea" prefHeight="70.0" prefWidth="200.0" AnchorPane.leftAnchor="250.0" AnchorPane.topAnchor="100.0" />
+</children>
+</AnchorPane>
+</content>
+<graphic>
+<ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+<image>
+<Image url="@random-icon.png" />
+</image>
+</ImageView>
+</graphic>
+</Tab>
   </tabs>
 </TabPane>

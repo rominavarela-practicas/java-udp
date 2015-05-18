@@ -1,6 +1,7 @@
 package listener;
 
 import environment.Console;
+import environment.Env;
 import DistributedUDPChat.Connection;
 import model_impl.Msg;
 import model_safecollection.MsgCollection;
@@ -37,6 +38,12 @@ public class InputListener {
 	 					con.socket.receive(con.packet);
 		 				Msg msg = new Msg(con.packet.getData());
 		 				inbox.push(msg);
+		 				
+		 				//lamport sync
+		 				long curr= Env.getTime();
+		 				if(msg.timestamp > curr)
+		 					Env.CLOCK_DIFFERENCE+= msg.timestamp - curr;
+		 					
 		 				sessionPool.visit(msg.srcNickname, con.packet.getAddress(), con.packet.getPort(), msg.timestamp, msg.id);
 			 			
 		 				synchronized(inbox){

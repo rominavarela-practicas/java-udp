@@ -1,6 +1,11 @@
 package DistributedUDPChat;
 
+import java.io.File;
+
 import enums.MsgType;
+import environment.Console;
+import environment.Env;
+import environment.IOUtil;
 import environment.Routine;
 import listener.InputListener;
 import listener.OutputListener;
@@ -24,7 +29,7 @@ public class DistributedUDPChatServer {
 		con = new Connection(true);
 		
 		//pools
-		sessionPool = new SessionCollection(new Session(0, "", con.address, con.port, System.currentTimeMillis()));
+		sessionPool = new SessionCollection(new Session(0, "", con.address, con.port, Env.getTime()));
 		inbox= new MsgCollection(false);
 		outbox= new MsgCollection(true);
 		
@@ -59,7 +64,7 @@ public class DistributedUDPChatServer {
 		    						Msg outMsg= new Msg(0, "", 
 		    								msgIn.srcNickname, MsgType.SERVER_PING, 
 		    								""+client.ID,
-		    								System.currentTimeMillis());
+		    								Env.getTime());
 		    						
 //		    						System.out.println("server hello "+msgIn.srcNickname);
 			    					outbox.push(outMsg);
@@ -71,7 +76,7 @@ public class DistributedUDPChatServer {
 			    						outMsg= new Msg(0, "", 
 			    								msgIn.srcNickname, MsgType.UPDATE_LIST, 
 			    								sessionPool.serialize(),
-			    								System.currentTimeMillis());
+			    								Env.getTime());
 				    					
 		    							outbox.push(outMsg);
 			    					}
@@ -85,16 +90,69 @@ public class DistributedUDPChatServer {
 			    						if(!s.nickname.contentEquals(msgIn.srcNickname))
 			    						{
 			    							Msg msgOut= new Msg(0, msgIn.srcNickname, 
-			    									s.nickname, MsgType.PRIVATE, msgIn.content, System.currentTimeMillis());
-			    							System.out.println("OUT "+msgOut.serialize());
+			    									s.nickname, MsgType.PRIVATE, msgIn.content, Env.getTime());
 			    							outbox.push(msgOut);
 			    						}
 			    					
 			    					break;
 			    				}
+			    				
+			    				case FILE_UP:
+			    				{
+			    					try
+			    					{
+			    						//upload
+			    						String filename= msgIn.content.substring(0, msgIn.content.indexOf(';'));
+				    					File dir= new File(".up");
+				    					if(!dir.exists())
+				    						dir.mkdir();
+				    					
+				    					File f= new File(dir+"/"+filename);
+				    					IOUtil.write(f, msgIn.content);
+				    					System.out.println("File up "+f.getAbsolutePath());
+				    					
+				    					//notify
+				    					if(msgIn.destNickname.contentEquals(Env.BROADCAST_NAME))
+				    					{
+				    						for(Session s: sessionPool.getList())
+				    						{
+				    							Msg msgOut= new Msg(0, msgIn.srcNickname, 
+				    									s.nickname, MsgType.FILE_UP, f.getName(), Env.getTime());
+				    							outbox.push(msgOut);
+				    						}
+				    					}
+				    					else
+				    					{
+				    						Msg msgOut= new Msg(msgIn.id, msgIn.srcNickname, 
+			    									msgIn.destNickname, MsgType.FILE_UP, f.getName(), Env.getTime());
+			    							outbox.push(msgOut);
+				    					}
+			    					}
+			    					catch(Exception ex)
+			    					{
+			    						System.out.println("Error @ ChatServerThread.upload >> "+ex.getMessage());
+			    			    		Console.log("Error @ ChatServerThread.upload >> "+ex.getMessage());
+			    					}
+			    					
+			    					break;
+			    				}
+			    				
+			    				case FILE_DOWN:
+			    				{
+			    					System.out.println("Downloading "+msgIn.content);
+			    					File dir= new File(".up");
+			    					File f= new File(dir+"/"+msgIn.content);
+			    					
+			    					String content= IOUtil.read(f);
+			    					System.out.println("SERVER CONTENT... "+content);
+			    					Msg msgOut= new Msg(0, "", 
+			    							msgIn.srcNickname, MsgType.FILE_DOWN, content, Env.getTime());
+	    							outbox.push(msgOut);
+	    							break;
+			    				}
 		    					
 		    					default:
-			    					System.out.println("UNKNOWN "+msgIn);
+			    					System.out.println("UNKNOWN "+msgIn.msgType+" >> "+msgIn);
 		    				}
 		    		 }
 		    	 }

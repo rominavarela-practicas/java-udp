@@ -35,6 +35,11 @@ public class ChatController {
 	@FXML private AnchorPane	ChatRoomAnchorPane;
 	@FXML private TextArea		ConsoleTextArea;
 	
+
+	@FXML private Tab			RandomTab;
+	@FXML private Button 		ClimateButton;
+	@FXML private TextArea		ClimateTextArea;
+	
 	@FXML private ListView<String> 	ChatList;
 	
 	/**
@@ -77,6 +82,7 @@ public class ChatController {
 			    		 
 			    		//enable and focus chat-room tab
 			    		ChatRoomTab.setDisable(false);
+			    		RandomTab.setDisable(false);
 			    		ChatTabPane.getSelectionModel().select(ChatRoomTab);
 			    					    		
 					} catch (Exception e) 
@@ -121,5 +127,10 @@ public class ChatController {
 			ChatRoomAnchorPane.setTopAnchor(c.room.pane, 0.0);
 			ChatRoomAnchorPane.setBottomAnchor(c.room.pane, 0.0);
 		}
+	}
+	
+	public void ClimateService()
+	{
+		ClimateTextArea.setText("climate service");
 	}
 }

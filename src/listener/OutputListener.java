@@ -91,6 +91,23 @@ public class OutputListener {
 		 						}
 	 							break;
 	 							
+		 					case FILE_UP:
+		 					case FILE_DOWN:
+		 						// if file comes from user, upload to server
+		 						if(msg.id != 0)
+		 						{
+		 							reply= new DatagramPacket(data.clone(), len, Env.SERVER_ADDRESS, Env.SERVER_PORT);
+		 							con.socket.send(reply);
+		 						}
+		 						// if file comes from sever, notify to user
+		 						else
+		 						{
+		 							dest = sessionPool.find(msg.destNickname);
+		 							reply= new DatagramPacket(data.clone(), len, dest.address, dest.port);
+		 							con.socket.send(reply);	
+		 						}
+		 					break;
+	 							
 							default:
 								break;
 		 					

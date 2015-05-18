@@ -1,8 +1,14 @@
 package chatroom;
 
+import java.io.File;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.Stack;
 
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+
+import lib.LZString;
 import model_impl.Msg;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -20,7 +26,8 @@ public class Conversation {
 	public long hello_msg_timestamp;
 	
 	public Stack<String>	msgStack;
-	public Room room;
+	public File 			fileToShare;
+	public Room 			room;
 	
 	public Thread listener;
 	
@@ -28,7 +35,7 @@ public class Conversation {
 	{
 		this.dstNickname= dstNickname;
 		this.enabled= true;
-		this.hello_msg_timestamp= System.currentTimeMillis();
+		this.hello_msg_timestamp= Env.getTime();
 		this.msgStack= new Stack<String>();
 		
 		try
@@ -77,9 +84,18 @@ public class Conversation {
 		room.AttachOkButton.setOnMouseClicked(new EventHandler<Event>() {
 			@Override
 			public void handle(Event arg0) {
-				System.out.println("Select");
-				room.MessagePane.setVisible(true);
-				room.AttachPane.setVisible(false);
+				
+				JFileChooser chooser = new JFileChooser(); 
+			    chooser.setDialogTitle("Select a file to share.");
+			    chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+			    chooser.setAcceptAllFileFilterUsed(false);
+			    
+			    if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION)
+			    {
+			    	fileToShare= chooser.getSelectedFile();
+			    	room.AttachTextField.setText(fileToShare.getAbsolutePath().toString());
+			    }
+			    
 			}
 		});
 		
@@ -87,7 +103,34 @@ public class Conversation {
 		room.AttachSelectButton.setOnMouseClicked(new EventHandler<Event>() {
 			@Override
 			public void handle(Event arg0) {
-				System.out.println("OK");
+				
+				try
+				{
+					//get data
+					byte[] data = Files.readAllBytes(fileToShare.toPath());
+					
+					//compress
+					@SuppressWarnings("static-access")
+					String uncompressed=Env.B64.encode(data);
+
+					System.out.println("UNCOMPRESSED "+uncompressed.length());
+					String compressed= LZString.compressToUTF16(uncompressed);
+					System.out.println("COMPRESSED "+compressed.length());
+					compressed=fileToShare.getName()+";"+compressed;
+					System.out.println("Compressed... "+compressed);
+					//upload
+					if(compressed.length() > Env.BUFFER_SIZE -100 )
+						JOptionPane.showMessageDialog(null, "Error. File exceeds buffer size.");
+					else
+						Env.client.sendFileUpMsg(dstNickname, compressed);
+				}
+				catch(Exception ex)
+				{
+	 				System.out.println("Error @ Conversation.AttachFile >> "+ex.getMessage());
+					JOptionPane.showMessageDialog(null,"Error @ Conversation.AttachFile >> "+ex.getMessage());
+		    		Console.log("Error @ Conversation.AttachFile >> "+ex.getMessage());
+				}
+				
 				room.MessagePane.setVisible(true);
 				room.AttachPane.setVisible(false);
 			}
@@ -99,6 +142,19 @@ public class Conversation {
 			public void handle(Event arg0) {
 				room.MessagePane.setVisible(true);
 				room.AttachPane.setVisible(false);
+			}
+		});
+		
+		room.ChatHistory.setOnMouseClicked(new EventHandler<Event>() {
+			@Override
+			public void handle(Event arg0) {
+				String selected= room.ChatHistory.getSelectionModel().getSelectedItem();
+				if(selected.startsWith("\n[FILE :"))
+				{
+					String filename= selected.substring(selected.lastIndexOf('\n')+1);
+					System.out.println("DOWNLOAD "+filename);
+					Env.client.sendFileDownMsg(filename);
+				}
 			}
 		});
 		
@@ -136,6 +192,7 @@ public class Conversation {
 				}
 			}
 		});
+		
 	}
 	
 	Thread conversationListener()
@@ -150,7 +207,7 @@ public class Conversation {
 		 		{
 		 			while(!msgStack.isEmpty())
 		 			{
-		 				hello_msg_timestamp= System.currentTimeMillis();
+		 				hello_msg_timestamp= Env.getTime();
 		 				room.ChatHistoryContent.add(msgStack.remove(0));
 		 			}
 		 			
@@ -165,7 +222,7 @@ public class Conversation {
 			 			}
 			 			
 			 			// update labels
-			 			long timeout= System.currentTimeMillis()-hello_msg_timestamp;
+			 			long timeout= Env.getTime()-hello_msg_timestamp;
 			 			if(timeout<Env.ONLINE_TIMEOUT)
 			 				room.StatusLabel1.setText("Online");
 			 			else

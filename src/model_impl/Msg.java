@@ -29,12 +29,26 @@ public class Msg extends MsgModel{
 	public Msg(byte[] rawMsg) throws Exception
 	{
 		//decipher byte stream
+		boolean isFile= false;
 		String rawText="";
 		for(byte b: rawMsg)
 		{
 			rawText+= (char) b;
 			if(rawText.endsWith("</msg>"))
-			break;
+				break;
+			
+			if(rawText.endsWith("<msgType>FILE_"))
+				isFile=true;
+		}
+		
+		//if is file, extract content separately
+		if(isFile)
+		{
+			String[] A=rawText.split("<content>",2);
+			String[] B=A[1].split("</content>",2);
+			
+			rawText=A[0]+B[1];
+			this.content=B[0];
 		}
 		
 		DocumentBuilder db = Env.dbf.newDocumentBuilder();
@@ -47,8 +61,7 @@ public class Msg extends MsgModel{
 		this.srcNickname= element.getElementsByTagName("srcNickname").item(0).getTextContent();
 		this.destNickname= element.getElementsByTagName("destNickname").item(0).getTextContent();
 		this.msgType= MsgType.valueOf(element.getElementsByTagName("msgType").item(0).getTextContent());
-		this.content="";
-		
+				
 		Element contentElement = (Element) element.getElementsByTagName("content").item(0);
 		switch(this.msgType)
 		{
@@ -61,6 +74,10 @@ public class Msg extends MsgModel{
 					this.content += new Session((Element) children.item(i)).serialize();
 				this.content+="</sessions>";
 				
+				break;
+			
+			case FILE_UP:
+			case FILE_DOWN:
 				break;
 				
 			default:
@@ -90,6 +107,13 @@ public class Msg extends MsgModel{
 	
 	public String toChatMsg()
 	{
-		return "\n"+this.srcNickname+" @ "+Env.dateFormat.format(new Date(this.timestamp))+"\n\n"+this.content+"\n";
+		switch(this.msgType)
+		{
+			case FILE_UP:
+				return "\n[FILE : click to download]\n\n"+this.srcNickname+" @ "+Env.dateFormat.format(new Date(this.timestamp))+"\n\n"+this.content;
+			default:
+				return "\n"+this.srcNickname+" @ "+Env.dateFormat.format(new Date(this.timestamp))+"\n\n"+this.content;
+		}
+		
 	}
 }

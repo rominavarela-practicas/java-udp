@@ -70,6 +70,7 @@ public class ChatRoom {
 						c.msgStack.push(msg.toChatMsg());
 					break;
 				}
+			
 		}
 		catch(Exception ex){}
 		
