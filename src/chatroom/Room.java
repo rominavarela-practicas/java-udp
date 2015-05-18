@@ -1,7 +1,9 @@
 package chatroom;
 
-import javafx.event.Event;
-import javafx.event.EventHandler;
+import java.util.ArrayList;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -13,8 +15,8 @@ import javafx.scene.layout.Pane;
 
 public class Room
 {
-	public AnchorPane 	room;
-	public String 		nickname;
+	public AnchorPane 	pane;
+	public String 		dstNickname;
 	
 	public Label 		NicknameLabel;
 	public Label		StatusLabel1;
@@ -23,7 +25,8 @@ public class Room
 	public MenuItem		OptionClearHistory;
 	public MenuItem		OptionBlock;
 	
-	public ListView<String>	ChatHistory;
+	public ListView<String>			ChatHistory;
+	public ObservableList<String> 	ChatHistoryContent;
 	
 	public Pane			MessagePane;
 	public TextField	MessageTextField;
@@ -37,43 +40,37 @@ public class Room
 	public Button		AttachOkButton;
 	
 	@SuppressWarnings("unchecked")
-	public Room(String nickname, AnchorPane room) throws Exception
+	public Room(String dstNickname, AnchorPane pane) throws Exception
 	{
-		this.room = room;
-		this.nickname= nickname;
+		this.pane = pane;
+		this.dstNickname= dstNickname;
 		
-	    NicknameLabel= (Label)room.lookup("#NicknameLabel");
-	    StatusLabel1= (Label)room.lookup("#StatusLabel1");
-	    StatusLabel2= (Label)room.lookup("#StatusLabel2");
-	    OptionsMenuButton= (MenuButton)room.lookup("#OptionsMenuButton");
+	    NicknameLabel= (Label)pane.lookup("#NicknameLabel");
+	    StatusLabel1= (Label)pane.lookup("#StatusLabel1");
+	    StatusLabel2= (Label)pane.lookup("#StatusLabel2");
+	    OptionsMenuButton= (MenuButton)pane.lookup("#OptionsMenuButton");
 	    OptionClearHistory= OptionsMenuButton.getItems().get(0);
 	    OptionBlock= OptionsMenuButton.getItems().get(1);
 	    
-	    ChatHistory= (ListView<String>)room.lookup("#ChatHistory");
+	    ChatHistory= (ListView<String>)pane.lookup("#ChatHistory");
 	    
-	    NicknameLabel.setText(nickname);
-	    
-	    MessagePane= (Pane)room.lookup("#MessagePane");
-		MessageTextField= (TextField)room.lookup("#MessageTextField");
-		MessageSendButton= (Button)room.lookup("#MessageSendButton");
-		MessageAttachButton= (Button)room.lookup("#MessageAttachButton");
+	    MessagePane= (Pane)pane.lookup("#MessagePane");
+		MessageTextField= (TextField)pane.lookup("#MessageTextField");
+		MessageSendButton= (Button)pane.lookup("#MessageSendButton");
+		MessageAttachButton= (Button)pane.lookup("#MessageAttachButton");
 		
-		AttachPane= (Pane)room.lookup("#AttachPane");
-		AttachTextField= (TextField)room.lookup("#AttachTextField");
-		AttachSelectButton= (Button)room.lookup("#AttachSelectButton");
-		AttachCancelButton= (Button)room.lookup("#AttachCancelButton");
-		AttachOkButton= (Button)room.lookup("#AttachOkButton");
+		AttachPane= (Pane)pane.lookup("#AttachPane");
+		AttachTextField= (TextField)pane.lookup("#AttachTextField");
+		AttachSelectButton= (Button)pane.lookup("#AttachSelectButton");
+		AttachCancelButton= (Button)pane.lookup("#AttachCancelButton");
+		AttachOkButton= (Button)pane.lookup("#AttachOkButton");
 		
-		setEventHandlers();
+		//
+	    NicknameLabel.setText(dstNickname);
+ 		ChatHistoryContent= FXCollections.observableList(new ArrayList<String>());
+ 		ChatHistory.setItems(ChatHistoryContent);
+		
 	}
 	
-	void setEventHandlers()
-	{
-		MessageSendButton.setOnMouseClicked(new EventHandler<Event>() {
-			@Override
-			public void handle(Event arg0) {
-				System.out.println("send "+MessageTextField.getText()+" to "+nickname);
-			}
-		});
-	}
+	
 }

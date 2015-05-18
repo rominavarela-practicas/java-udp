@@ -4,21 +4,32 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.text.SimpleDateFormat;
 import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import DistributedUDPChat.DistributedUDPChatClient;
+import DistributedUDPChat.DistributedUDPChatServer;
+
 public class Env
 {
 	public static DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+	public static SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss");
 	
 	public static boolean			SERVER_LAUNCHED=false;
 	public static long				LAST_SERVER_SYNC=0;
 	public static int 				SERVER_TIMEOUT;
+	public static int 				ONLINE_TIMEOUT;
 	
 	public static InetAddress 		SERVER_ADDRESS;
 	public static int 				SERVER_PORT;
 	public static int 				BUFFER_SIZE;
+	
+	public static DistributedUDPChatClient client;
+	public static DistributedUDPChatServer server;
+	
+	public static String			BROADCAST_NAME;
 	
 	public static void init()
 	{
@@ -34,6 +45,8 @@ public class Env
 			SERVER_PORT = Integer.parseInt(prop.getProperty("serverPort"));
 			BUFFER_SIZE = Integer.parseInt(prop.getProperty("buffSize"));
 			SERVER_TIMEOUT = Integer.parseInt(prop.getProperty("serverTimeout"));
+			ONLINE_TIMEOUT = Integer.parseInt(prop.getProperty("onlineTimeout"));
+			BROADCAST_NAME = prop.getProperty("broadcastName");
 		}
 		catch(Exception ex)
 		{

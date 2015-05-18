@@ -1,6 +1,7 @@
 package DistributedUDPChat;
 
 import enums.MsgType;
+import environment.Routine;
 import listener.InputListener;
 import listener.OutputListener;
 import model_impl.Msg;
@@ -60,12 +61,13 @@ public class DistributedUDPChatServer {
 		    								""+client.ID,
 		    								System.currentTimeMillis());
 		    						
-		    						System.out.println("server hello "+msgIn.srcNickname);
+//		    						System.out.println("server hello "+msgIn.srcNickname);
 			    					outbox.push(outMsg);
 			    					
 			    					//update list
 			    					if(sessionPool.size()-1 > Integer.parseInt(msgIn.content))
 			    					{
+			    						System.out.println("list-update for "+msgIn.srcNickname);
 			    						outMsg= new Msg(0, "", 
 			    								msgIn.srcNickname, MsgType.UPDATE_LIST, 
 			    								sessionPool.serialize(),
@@ -77,6 +79,20 @@ public class DistributedUDPChatServer {
 		    						break;
 		    					}
 		    					
+			    				case PRIVATE:
+			    				{
+			    					for(Session s: sessionPool.getList())
+			    						if(!s.nickname.contentEquals(msgIn.srcNickname))
+			    						{
+			    							Msg msgOut= new Msg(0, msgIn.srcNickname, 
+			    									s.nickname, MsgType.PRIVATE, msgIn.content, System.currentTimeMillis());
+			    							System.out.println("OUT "+msgOut.serialize());
+			    							outbox.push(msgOut);
+			    						}
+			    					
+			    					break;
+			    				}
+		    					
 		    					default:
 			    					System.out.println("UNKNOWN "+msgIn);
 		    				}
@@ -85,7 +101,7 @@ public class DistributedUDPChatServer {
 		    	 catch(Exception ex)
 		    	 {
 		    		 System.out.println("Error @ ChatServerThread >> "+ex.getMessage());
-		    		 ex.printStackTrace();
+		    		 Routine.exit();
 		    	 }
 		     }
 		});

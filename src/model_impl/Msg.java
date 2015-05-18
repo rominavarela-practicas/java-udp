@@ -1,6 +1,7 @@
 package model_impl;
 
 import java.io.StringReader;
+import java.util.Date;
 
 import javax.xml.parsers.DocumentBuilder;
 
@@ -76,7 +77,7 @@ public class Msg extends MsgModel{
 	}
 
 	@Override
-	public String serialize() {
+	public String serialize() {		
 		return "<msg>"
 				+ "<id>"+id+"</id>"
 				+ "<srcNickname>"+srcNickname+"</srcNickname>"
@@ -85,5 +86,10 @@ public class Msg extends MsgModel{
 				+ "<content>"+content+"</content>"
 				+ "<timestamp>"+timestamp+"</timestamp>"
 				+ "</msg>";
+	}
+	
+	public String toChatMsg()
+	{
+		return "\n"+this.srcNickname+" @ "+Env.dateFormat.format(new Date(this.timestamp))+"\n\n"+this.content+"\n";
 	}
 }

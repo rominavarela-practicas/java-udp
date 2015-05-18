@@ -25,14 +25,13 @@ public class SessionCollection extends safecollection<Session>{
 	
 	/**
 	 * If session exists, update timestamp and connection info.<br/>
-	 * If not, create new session.<br/>
-	 * Calls notifyAll whenever a change is done
+	 * If not, create new session.
 	 * @param srcNickname equivalent to Message.src
 	 * @param packet
 	 */
 	public Session visit (String srcNickname, InetAddress address, int port , long timestamp , int ID )
 	{
-		if(srcNickname.contentEquals(self.nickname) || srcNickname.isEmpty())
+		if( ID==0 || srcNickname.contentEquals(Env.BROADCAST_NAME) || srcNickname.contentEquals(self.nickname))
 			return null;
 		
 		Session s= super.find(srcNickname);
@@ -53,10 +52,6 @@ public class SessionCollection extends safecollection<Session>{
 		int newID = super.push(s);
 		if(self.isServer())
 			s.ID= newID;
-		
-		synchronized(this) {
-			this.notifyAll();
-		}
 		
 		return s;
 	}

@@ -1,8 +1,11 @@
 package DistributedUDPChat;
 
+import chatroom.ChatRoom;
+import chatroom.Conversation;
 import enums.MsgType;
 import environment.Console;
 import environment.Env;
+import environment.Routine;
 import listener.InputListener;
 import listener.OutputListener;
 import model_impl.Msg;
@@ -16,8 +19,6 @@ public class DistributedUDPChatClient {
 	public SessionCollection		sessionPool;
 	public MsgCollection			inbox;
 	public MsgCollection			outbox;
-
-	public DistributedUDPChatServer server;
 	
 	InputListener			in;
 	OutputListener			out;
@@ -38,6 +39,13 @@ public class DistributedUDPChatClient {
 		
 		serverSyncThread().start();
 		chatThread().start();
+		
+		try
+		{
+    		//show broadcast pane
+    		ChatRoom.push(Env.BROADCAST_NAME);
+		}
+		catch(Exception e){}
 	}
 	
 	/**
@@ -84,15 +92,27 @@ public class DistributedUDPChatClient {
 				    					for(Session s: sessionPool.deserialize(msgIn.content))
 				    						if(!s.nickname.contentEquals(sessionPool.self.nickname))
 					    					{
-					    						sessionPool.visit(s.nickname, s.address, s.port, s.timestamp, s.ID);
-					    						
-					    						if(s.isNew)
-						    					{
-						    						Console.log("Met "+s.nickname);
-						    						s.isNew= false;
-						    					}
+					    						s= sessionPool.visit(s.nickname, s.address, s.port, s.timestamp, s.ID);
+					    						checkSession(s);
 					    					}
+				    					break;
+				    				}
+				    				
+				    				case PRIVATE:
+				    				{
+				    					if(msgIn.id!=0)
+					    					checkSession(sessionPool.find(msgIn.srcNickname));
+					    				
+				    					ChatRoom.pushMsg(msgIn);
+				    					break;
+				    				}
+				    				
+				    				case HELLO:
+				    				{
+				    					checkSession(sessionPool.find(msgIn.srcNickname));
 				    					
+				    					Conversation c= ChatRoom.find(msgIn.srcNickname);
+				    					c.hello_msg_timestamp= System.currentTimeMillis();
 				    					break;
 				    				}
 				    				
@@ -107,19 +127,20 @@ public class DistributedUDPChatClient {
 		    	 catch(Exception ex)
 		    	 {
 		    		 System.out.println("Error @ ChatClientThread >> "+ex.getMessage());
-		    		 
-		    		 System.out.println("Closing "+con.socket.getPort());
-		              con.socket.close();
-		              if(server!=null)
-		              {
-			        	  System.out.println("Closing "+server.con.socket.getPort());
-		            	  server.con.socket.close();
-		              }
-		              System.out.println("Connection closed");
-		              System.exit(0);
+		    		 Routine.exit();
 		    	 }
 		     }
 		});
+	}
+	
+	public void checkSession(Session s)
+	{		
+		if(s.isNew)
+		{
+			Console.log("Met "+s.nickname);
+			ChatRoom.push(s.nickname);
+			s.isNew= false;
+		}
 	}
 	
 	/**
@@ -162,7 +183,7 @@ public class DistributedUDPChatClient {
 				    		{
 				    			Env.SERVER_LAUNCHED=true;
 				    			Console.log("Server not found. Starting up own server.");
-				    			server= new DistributedUDPChatServer();
+				    			Env.server= new DistributedUDPChatServer();
 				    			Thread.sleep(1000);
 				    		}
 			    			catch(Exception e)
@@ -179,4 +200,19 @@ public class DistributedUDPChatClient {
 		});
 	}
 	
+	public Msg sendPrivateMsg(String dstNickname, String content)
+	{
+		Msg msgOut= new Msg(sessionPool.self.ID, sessionPool.self.nickname, 
+				dstNickname, MsgType.PRIVATE, content, System.currentTimeMillis());
+		outbox.push(msgOut);
+		
+		return msgOut;
+	}
+	
+	public void sendHelloMsg(String dstNickname)
+	{		
+		Msg msgOut= new Msg(sessionPool.self.ID, sessionPool.self.nickname, 
+				dstNickname, MsgType.HELLO, "", System.currentTimeMillis());
+		outbox.push(msgOut);
+	}
 }

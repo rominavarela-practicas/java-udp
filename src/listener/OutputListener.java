@@ -56,7 +56,6 @@ public class OutputListener {
 						
 						switch(msg.msgType)
 	 					{
-							//SERVER_PING client sends message to server, server replies message to client
 		 					case SERVER_PING:
 		 						if(con.isServer())
 		 						{
@@ -78,6 +77,20 @@ public class OutputListener {
 	 							con.socket.send(reply);
 	 							break;
 		 					
+		 					case PRIVATE:
+		 						if(msg.destNickname.contentEquals(Env.BROADCAST_NAME))
+		 						{
+		 							reply= new DatagramPacket(data.clone(), len, Env.SERVER_ADDRESS, Env.SERVER_PORT);
+		 							con.socket.send(reply);
+		 						}
+		 						else
+		 						{
+			 						dest = sessionPool.find(msg.destNickname);
+		 							reply= new DatagramPacket(data.clone(), len, dest.address, dest.port);
+		 							con.socket.send(reply);		 							
+		 						}
+	 							break;
+	 							
 							default:
 								break;
 		 					
