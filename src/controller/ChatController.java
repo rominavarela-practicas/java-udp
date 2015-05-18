@@ -1,10 +1,20 @@
 package controller;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.net.HttpURLConnection;
 import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.net.URL;
 import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
+import javax.xml.parsers.DocumentBuilder;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
 
 import main.FXMain;
 import model_impl.Session;
@@ -136,7 +146,61 @@ public class ChatController {
 	
 	public void ClimateService()
 	{
-		ClimateTextArea.setText("climate service");
+		ClimateTextArea.setText("climate service ...");
+		try
+		{
+			String url = "https://query.yahooapis.com/v1/public/yql?q=select+*+from+weather.forecast+where+woeid%3D124162&diagnostics=true";
+			URL obj = new URL(url);
+			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+			con.setRequestMethod("GET");
+			
+			int responseCode = con.getResponseCode();
+			System.out.println("\nSending 'GET' request to URL : " + url);
+			System.out.println("Response Code : " + responseCode);
+	 
+			BufferedReader in = new BufferedReader(
+			        new InputStreamReader(con.getInputStream()));
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+	 
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
+			
+			// parse result
+			DocumentBuilder db = Env.dbf.newDocumentBuilder();
+			InputSource is = new InputSource();
+			is.setCharacterStream(new StringReader(response.toString()));
+			Document doc = db.parse(is);
+			
+			String desc= doc.getElementsByTagName("description").item(0).getTextContent().split("/>",2)[1];
+			String s= "";
+			int x=0;
+			for(int i=0; i<desc.length(); i++)
+			{
+				if(desc.charAt(i)=='<')
+					x++;
+				else if(desc.charAt(i)=='>')
+					x--;
+				else if(x<=0)
+				{
+					s+= desc.charAt(i);
+					x=0;
+				}
+			}
+
+			s=  doc.getElementsByTagName("title").item(0).getTextContent()+"\n"+s;
+			//print result
+			System.out.println(s);
+			ClimateTextArea.setText(s);
+			
+		}
+		catch(Exception ex)
+		{
+			System.out.println("Error @ ChatController.ClimateService >> "+ex.getMessage());
+    		Console.log("Error @ ChatController.ClimateService >> "+ex.getMessage());
+		}
 	}
 	
 	public void AddExternalNet()
